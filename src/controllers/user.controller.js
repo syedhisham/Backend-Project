@@ -6,23 +6,34 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, username, email, password } = req.body;
-  console.log(`Email is ${email}`);
-
   if (
     [fullName, username, email, password].some((field) => field?.trim() === "")
   ) {
     throw new ApiError(400, "Fill all the fields");
   }
 
-  const existedUser = User.findOne({
-    $or: [{ username }, { email }],
-  });
-
-  if (existedUser) {
-    throw new ApiError(409, "User is already registered");
+  // const existedUser = await User.findOne({
+  //   $or: [{ username }, { email }],
+  // });
+  const emailExists = await User.findOne({email});
+  if (emailExists) {
+    throw new ApiError(400,"Email is already registered");
   }
+  const usernameExists = await User.findOne({username});
+  if (usernameExists) {
+    throw new ApiError(400,"username is already registered");
+  }
+
+  // if (existedUser) {
+  //   throw new ApiError(409, "User is already registered");
+  // }
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+  let coverImageLocalPath;
+  if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    coverImageLocalPath = req.files.coverImage[0]?.path;
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
@@ -36,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     username,
+    fullName,
     avatar: avatar.url,
     coverImage: coverImage?.url || "",
     username: username.toLowerCase(),
