@@ -259,7 +259,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
   if (oldAvatarUrl) {
     try {
-      await deleteFromCloudinary(oldAvatarUrl);
+      await deleteFromCloudinary(oldAvatarUrl, 'image');
     } catch (error) {
       throw new ApiError(
         500,
@@ -275,34 +275,37 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   if (!coverImageLocalPath) {
     throw new ApiError(400, "Cover Image is missing");
   }
-  const coverImage = await uploadOnCloudinary(avatarLocalPath);
+
+  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
   if (!coverImage.url) {
-    throw new ApiError(500, "Error uploading avatar on cloudinary");
+    throw new ApiError(500, "Error uploading cover Image on Cloudinary");
   }
+
   const user = await User.findById(req.user?._id).select("-password");
-  const oldCoverImage = user.coverImage;
+  const oldCoverImageUrl = user.coverImage;
 
   user.coverImage = coverImage.url;
   await user.save({ validateBeforeSave: false });
 
-  if (oldCoverImage) {
+  if (oldCoverImageUrl) {
     try {
-      await deleteFromCloudinary(oldCoverImage);
+      await deleteFromCloudinary(oldCoverImageUrl , 'image');
     } catch (error) {
+      console.error("Error deleting old cover image: ", error.message);
       throw new ApiError(
         500,
-        error?.message || "Error while deleting old cover image"
+        error?.message || "Something went wrong while deleting old Cover Image"
       );
     }
   }
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Cover Image is updated"));
+
+  return res.status(200).json(new ApiResponse(200, user, "Cover Image is updated"));
 });
+
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   //data retrieval from url
   const { username } = req.params;
-  if (username?.trim()) {
+  if (!username?.trim()) {
     throw new ApiError(400, "Username is missing");
   }
 
@@ -368,58 +371,58 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, channel[0], "User channel fetched successfuly"));
 });
-const getWatchHistory = asyncHandler(async(req,res) => {
+const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
         _id: new mongoose.Types.ObjectId(req.user._id),
-      }
+      },
     },
     {
       $lookup: {
         from: "videos",
         localField: "watchHistory",
         foreignField: "_id",
-        as:"watchHistory",
+        as: "watchHistory",
         pipeline: [
           {
             $lookup: {
               from: "users",
-              localField:"owner",
-              foreignField:"_id",
+              localField: "owner",
+              foreignField: "_id",
               as: "owner",
               pipeline: [
                 {
                   $project: {
                     fullName: 1,
                     username: 1,
-                    avatar: 1
-                  }
-                }
-              ]
-            }
+                    avatar: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
               owner: {
-                $first: "$owner"
-              }
-            }
-          }
-        ]
-      }
-    }
-  ])
+                $first: "$owner",
+              },
+            },
+          },
+        ],
+      },
+    },
+  ]);
   return res
-  .status(200)
-  .json(
-    new ApiResponse(
-      200,
-      user[0].watchHistory,
-      "Watch history fetched successfuly"
-    )
-  )
-})
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        user[0].watchHistory,
+        "Watch history fetched successfuly"
+      )
+    );
+});
 export {
   registerUser,
   loginUser,

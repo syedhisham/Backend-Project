@@ -18,8 +18,12 @@ app.use(cookieParser());
 
 //routes import
 import userRoutes from "./routes/user.route.js"
+import tweetRoutes from "./routes/tweet.route.js"
+import videoRoutes from "./routes/video.route.js"
 
 //routes declaration
 app.use("/api/v1/users", userRoutes)
+app.use("/api/v1/tweets", tweetRoutes)
+app.use("/api/v1/videos", videoRoutes)
 
 export { app };

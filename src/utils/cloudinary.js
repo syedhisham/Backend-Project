@@ -1,7 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-// Configuration
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -14,25 +13,31 @@ const uploadOnCloudinary = async (localFilePath) => {
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
     });
-    // console.log("File Uploaded to Cloudinary ", response.url);
     fs.unlinkSync(localFilePath);
-    
+
     return response;
   } catch (error) {
     fs.unlinkSync(localFilePath);
     return null;
   }
 };
-const deleteFromCloudinary = async (url) => {
+const deleteFromCloudinary = async (url, resourceType = "auto") => {
   try {
-    // Extract the public ID from the URL
-    const publicId = url.split('/').pop().split('.')[0];
+    const publicId = url.split("/").pop().split(".")[0];
+    const response = await cloudinary.uploader.destroy(publicId, {
+      resource_type: resourceType,
+    });
 
-    // Delete the image using the public ID
-    await cloudinary.uploader.destroy(publicId);
+    if (response.result === "ok") {
+      return response;
+    } else {
+      throw new Error(
+        `Failed to delete resource. Response: ${response.result}`
+      );
+    }
   } catch (error) {
     console.error("Error deleting from Cloudinary:", error);
-    throw new Error("Failed to delete the old avatar from Cloudinary.");
+    throw new Error("Failed to delete from Cloudinary.");
   }
 };
 
