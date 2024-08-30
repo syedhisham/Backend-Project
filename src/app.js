@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+
 const app = express();
 
 app.use(
@@ -21,11 +22,13 @@ import userRoutes from "./routes/user.route.js"
 import tweetRoutes from "./routes/tweet.route.js"
 import videoRoutes from "./routes/video.route.js"
 import subscriptionRoutes from "./routes/subscription.route.js"
+import playlistRoutes from "./routes/playlist.route.js"
 
 //routes declaration
 app.use("/api/v1/users", userRoutes)
 app.use("/api/v1/tweets", tweetRoutes)
 app.use("/api/v1/videos", videoRoutes)
 app.use("/api/v1/subscriptions", subscriptionRoutes)
+app.use("/api/v1/playlists", playlistRoutes)
 
 export { app };
