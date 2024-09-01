@@ -59,7 +59,6 @@ const viewsOnAVideo = asyncHandler(async (req, res) => {
   video.views += 1;
   await video.save();
 
-  // Add the video to the user's watch history
   await User.findByIdAndUpdate(userId, {
     $addToSet: { watchHistory: videoId },
   });
@@ -76,7 +75,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     userId,
   } = req.query;
 
-  // Validate user
+
 
   const user = await User.findById(userId).select("-password");
 
@@ -84,34 +83,28 @@ const getAllVideos = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
-  // Build the search query for videos
   let searchQuery = { owner: userId };
   if (query) {
-    searchQuery.title = { $regex: query, $options: "i" }; // Case-insensitive search by title
+    searchQuery.title = { $regex: query, $options: "i" };
   }
 
-  // Determine sort options
+
   let sortOptions = {};
   sortOptions[sortBy] = sortType === "asc" ? 1 : -1;
 
-  // Calculate skip value for pagination
   const skip = (page - 1) * limit;
 
-  // Fetch videos with pagination and sorting
   const videos = await Video.find(searchQuery)
     .sort(sortOptions)
     .skip(skip)
     .limit(Number(limit));
 
-  // Check if videos are found
   if (videos.length === 0) {
     throw new ApiError(404, "No videos found for this user");
   }
 
-  // Fetch total count for pagination metadata
   const totalVideos = await Video.countDocuments(searchQuery);
 
-  // Send the response
   return res.status(200).json(
     new ApiResponse(
       200,

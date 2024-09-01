@@ -10,7 +10,6 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Insert Channel ID to search for the channel");
   }
   const userId = req.user?._id;
-  // Check if subscription exists
   let subscription = await Subscription.findOne({
     subscriber: userId,
     channel: channelId,
@@ -18,12 +17,10 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 
   let isSubscribed;
   if (subscription) {
-    // If subscription exists, toggle it (unsubscribe)
     await Subscription.deleteOne({ _id: subscription._id });
     isSubscribed = false;
     console.log("Unsubscribed successfully");
   } else {
-    // If no subscription exists, create one (subscribe)
     subscription = await Subscription.create({
       subscriber: userId,
       channel: channelId,
@@ -169,5 +166,4 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
       )
     );
 });
-
 export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };
