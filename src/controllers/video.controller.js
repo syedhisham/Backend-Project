@@ -75,8 +75,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
     userId,
   } = req.query;
 
-
-
   const user = await User.findById(userId).select("-password");
 
   if (!user) {
@@ -87,7 +85,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
   if (query) {
     searchQuery.title = { $regex: query, $options: "i" };
   }
-
 
   let sortOptions = {};
   sortOptions[sortBy] = sortType === "asc" ? 1 : -1;
@@ -171,22 +168,16 @@ const deleteVideo = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Video deleted successfully"));
 });
-const togglePublishStatus = asyncHandler(async(req,res) => {
-  const {videoId} = req.params
+const togglePublishStatus = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
 
-  const video = await Video.findById(videoId)
+  const video = await Video.findById(videoId);
 
-  video.isPublished = true
+  video.isPublished = true;
   return res
-  .status(200)
-  .json(
-    new ApiResponse(
-      200,
-      video,
-      "Video is published"
-    )
-  )
-})
+    .status(200)
+    .json(new ApiResponse(200, video, "Video is published"));
+});
 
 export {
   publishAVideo,
@@ -194,5 +185,5 @@ export {
   getAllVideos,
   getVideoById,
   deleteVideo,
-  togglePublishStatus
+  togglePublishStatus,
 };

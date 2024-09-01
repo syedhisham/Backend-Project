@@ -128,24 +128,18 @@ const updateComment = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, comment, "Comment Updated successfuly"));
 });
 
-const deleteComment = asyncHandler(async(req,res) => {
-  const { commentId} = req.params
+const deleteComment = asyncHandler(async (req, res) => {
+  const { commentId } = req.params;
   if (!commentId) {
-    throw new ApiError(201, "Comment Id is required")
+    throw new ApiError(201, "Comment Id is required");
   }
-  const commentToDelete = await Comment.findByIdAndDelete({_id: commentId})
+  const commentToDelete = await Comment.findByIdAndDelete({ _id: commentId });
   if (!commentToDelete) {
-    throw new ApiError(500, "Something went wrong while deleting the comment")
+    throw new ApiError(500, "Something went wrong while deleting the comment");
   }
   return res
-  .status(200)
-  .json(
-    new ApiResponse(
-      200,
-      commentToDelete,
-      "Comment deleted successfuly"
-    )
-  )
-})
+    .status(200)
+    .json(new ApiResponse(200, commentToDelete, "Comment deleted successfuly"));
+});
 
 export { addComment, getAllComments, updateComment, deleteComment };
