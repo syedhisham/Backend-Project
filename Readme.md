@@ -52,8 +52,14 @@ This project provides a backend API for a video and tweet platform, enabling use
 
    ```env
    MONGODB_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
    PORT=your_preferred_port
+   ACCESS_TOKEN_SECRET=Your access token secret
+   ACCESS_TOKEN_EXPIRY=expiry time
+   REFRESH_TOKEN_SECRET=Your refresh token secret
+   REFRESH_TOKEN_EXPIRY=expiry time
+   CLOUDINARY_CLOUD_NAME=Your cloud name
+   CLOUDINARY_API_KEY=Your cloudinary api key
+   CLOUDINARY_API_SECRET=Your cloudinary api secret
    ```
 
 4. Start the Server
