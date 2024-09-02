@@ -157,7 +157,7 @@ For testing, you can use tools like [Postman](https://www.postman.com/)
 
 ## Contact
 
-For any questions or inquiries, please contact (mailto:syedhishamshah27@gmail.com).
+For any questions or inquiries, please contact (syedhishamshah27@gmail.com).
 
 Feel free to modify and expand upon this template as needed to fit your project’s specific requirements and details.
 
