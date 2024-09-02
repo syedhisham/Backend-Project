@@ -25,6 +25,7 @@ import playlistRoutes from "./routes/playlist.route.js";
 import likeRoutes from "./routes/like.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import healthCheckRoutes from "./routes/healthCheck.routes.js";
+import dashboardRoutes from "./routes/dashboard.route.js"
 
 //routes declaration
 app.use("/api/v1/users", userRoutes);
@@ -35,5 +36,6 @@ app.use("/api/v1/playlists", playlistRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/health-check", healthCheckRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 export { app };
