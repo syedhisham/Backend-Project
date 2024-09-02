@@ -1,6 +1,4 @@
-
-```markdown
-# Backend API for Video & Tweet Platform
+## Backend API for Video & Tweet Platform
 
 ## Overview
 
@@ -156,7 +154,6 @@ For testing, you can use tools like [Postman](https://www.postman.com/)
 For any questions or inquiries, please contact (mailto:syedhishamshah27@gmail.com).
 
 Feel free to modify and expand upon this template as needed to fit your project’s specific requirements and details.
-```
 
 ### Notes:
 - Replace `your-username`, `your-repo-name`, and other placeholders with actual values relevant to your project.
