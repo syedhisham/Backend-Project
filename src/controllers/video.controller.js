@@ -50,21 +50,36 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const viewsOnAVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const userId = req.user?._id;
+  if (!videoId) {
+    throw new ApiError(400, "Video ID is required");
+  }
+  if (!userId) {
+    throw new ApiError(401, "User not authenticated");
+  }
+  const video = await Video.findByIdAndUpdate(
+    videoId,
+    { $inc: { views: 1 } },
+    { new: true }
+  );
 
-  const video = await Video.findById(videoId);
   if (!video) {
     throw new ApiError(404, "Video not found");
   }
+  const userUpdate = await User.findByIdAndUpdate(
+    userId,
+    {
+      $addToSet: { watchHistory: videoId },
+    },
+    { new: true }
+  );
 
-  video.views += 1;
-  await video.save();
-
-  await User.findByIdAndUpdate(userId, {
-    $addToSet: { watchHistory: videoId },
-  });
+  if (!userUpdate) {
+    throw new ApiError(404, "User not found or unable to update watch history");
+  }
 
   return res.status(200).json(new ApiResponse(200, video, "Video watched"));
 });
+
 const getAllVideos = asyncHandler(async (req, res) => {
   const {
     page = 1,
